@@ -1,0 +1,25 @@
+{
+  "name": "beatsaver-electron",
+  "version": "1.0.0",
+  "description": "An Electron app wrapping BeatSaver which adds duplicate song detection and other features",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JakeCover/BeatSaverElectron.git"
+  },
+  "keywords": [
+    "beatsaber",
+    "beatsaver",
+    "scoresaver",
+    "mods"
+  ],
+  "author": "Cobular",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JakeCover/BeatSaverElectron/issues"
+  },
+  "homepage": "https://github.com/JakeCover/BeatSaverElectron#readme"
+}
