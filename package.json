@@ -2,9 +2,12 @@
   "name": "beatsaver-electron",
   "version": "1.0.0",
   "description": "An Electron app wrapping BeatSaver which adds duplicate song detection and other features",
-  "main": "index.ts",
+  "main": "src/main.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint -c .eslintrc --ext .ts ./src",
+    "start": "npm run build && electron ./dist/main.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +24,14 @@
   "bugs": {
     "url": "https://github.com/JakeCover/BeatSaverElectron/issues"
   },
-  "homepage": "https://github.com/JakeCover/BeatSaverElectron#readme"
+  "homepage": "https://github.com/JakeCover/BeatSaverElectron#readme",
+  "devDependencies": {
+    "electron": "^13.1.8",
+    "prettier": "^2.3.2"
+  },
+  "prettier": {
+    "semi": false,
+    "tabWidth": 2,
+    "arrowParens": "always"
+  }
 }
