@@ -1,12 +1,13 @@
 import { createHash } from "crypto"
 import { readFile, readdir, writeFile, unlink } from "fs/promises"
 import { join } from "path"
+import { unlinkSync } from "fs"
 
 
 async function hashFile(songDir: string): Promise<string> {
   const hashedFilePath = join(songDir, "/", "hashed")
   try {
-    return await readFile(hashedFilePath, "utf8")
+    return await readFile(hashedFilePath, "utf-8")
   } catch (e) {}
   let infoDatBuffer
   try {
@@ -14,7 +15,13 @@ async function hashFile(songDir: string): Promise<string> {
   } catch (e) {
     return
   }
-  const infoDat = await JSON.parse(infoDatBuffer.toString("utf8"))
+  let infoDat
+  try {
+    infoDat = await JSON.parse(infoDatBuffer.toString("utf8"))
+
+  } catch (e) {
+    return
+  }
   const bufferArray: Buffer[] = [infoDatBuffer]
 
   for (const difficultyBeatmapSets of infoDat["_difficultyBeatmapSets"]) {
@@ -47,14 +54,16 @@ export async function getAllHashes(songsDir: string): Promise<string[]> {
 
 async function testPrint() {
   await deleteHashFiles(
-    "C:\\Users\\jdc10\\Downloads\\BSLegacyUtil (1)\\BSLegacyUtil\\Beat Saber\\Beat Saber_Data\\CustomLevels"
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Beat Saber\\Beat Saber_Data\\CustomLevels"
   )
   console.time("hashWithShortcut")
-
+  await getAllHashes(
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Beat Saber\\Beat Saber_Data\\CustomLevels"
+  )
   console.timeEnd("hashWithShortcut")
   console.time("hashWithoutShortcut")
   await getAllHashes(
-    "C:\\Users\\jdc10\\Downloads\\BSLegacyUtil (1)\\BSLegacyUtil\\Beat Saber\\Beat Saber_Data\\CustomLevels"
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Beat Saber\\Beat Saber_Data\\CustomLevels"
   )
   console.timeEnd("hashWithoutShortcut")
 }
@@ -65,7 +74,7 @@ export async function deleteHashFiles(songsDir: string) {
     .map((dirEnt) => dirEnt.name)
   directories.forEach((value) => {
     try {
-      unlink(join(songsDir, value, "/", "hashed"))
+      unlinkSync(join(songsDir, value, "/", "hashed"))
     } catch (e) {}
   })
 }
