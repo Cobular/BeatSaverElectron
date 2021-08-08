@@ -1,0 +1,10 @@
+.settingsButton {
+    width: 15px;
+    height: 15px;
+}
+
+.not-downloaded-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

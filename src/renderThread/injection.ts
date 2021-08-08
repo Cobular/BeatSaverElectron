@@ -12,35 +12,36 @@ function injectControl(id: string) {
   })
   const NotDownloadedButton = dropdown.children[1].cloneNode(true)
   if (!nodeIsElement(NotDownloadedButton)) return
-  // @ts-ignore
-  NotDownloadedButton.children[0].onclick = toggleButtonState
-  // @ts-ignore
-  NotDownloadedButton.children[1].onclick = toggleButtonState
-  NotDownloadedButton.children[0].setAttribute("id", id)
-
-  var button = document.createElement("INPUT")
-  button.setAttribute("type", "image")
-  button.setAttribute("src","https://cdn.pixabay.com/photo/2018/04/23/15/35/settings-3344607_1280.png")
-  button.setAttribute("width", "15")
-  button.setAttribute("height", "15")
-  NotDownloadedButton.appendChild(button)
+  NotDownloadedButton.classList.add("not-downloaded-buttons")
 
   const label = NotDownloadedButton.children[1]
+  if (!elementIsLabel(label)) return
   label.setAttribute("for", id)
   label.textContent = "Not Downloaded"
+  label.onclick = toggleButtonState
   dropdown.insertBefore(NotDownloadedButton, h4Elements[1])
+
+  const toggleButton = NotDownloadedButton.children[0]
+  // @ts-ignore
+  toggleButton.onclick = toggleButtonState
+  // @ts-ignore
+  toggleButton.setAttribute("id", id)
+
+  let settingsButton = document.createElement("input")
+  settingsButton.setAttribute("type", "image")
+  // TODO: probably should download and re-host this
+  settingsButton.setAttribute("src","https://cdn.pixabay.com/photo/2018/04/23/15/35/settings-3344607_1280.png")
+  settingsButton.className = "settingsButton"
+  NotDownloadedButton.appendChild(settingsButton)
+  NotDownloadedButton.onclick
 }
 
 let DOWNLOADED_SONGS_BUTTON_STATE: boolean = false
 let DOWNLOADED_SONGS_BUTTON_STATE_HELPER: boolean = false
 let DOWNLOADED_SONG_HASHES: string[]
 
-const showDownloadedSongsEvent = new Event("showDownloadedSongsEvent", {
-  bubbles: true,
-})
-const hideDownloadedSongsEvent = new Event("hideDownloadedSongsEvent", {
-  bubbles: true,
-})
+const showDownloadedSongsEvent = new Event("showDownloadedSongsEvent")
+const hideDownloadedSongsEvent = new Event("hideDownloadedSongsEvent")
 
 function toggleButtonState() {
   if (DOWNLOADED_SONGS_BUTTON_STATE_HELPER) {
@@ -59,6 +60,12 @@ function toggleButtonState() {
   } else DOWNLOADED_SONGS_BUTTON_STATE_HELPER = true
 }
 
+
+/// Handle clicking on the gear icon
+function openSettings() {
+  ipcRenderer.send("")
+}
+
 function processSearchResults(element: HTMLElement) {
   const regex = /https:\/\/cdn\.beatsaver\.com\/([0-9a-fA-F]{40})\.zip/gm
   let songHash = regex.exec(
@@ -70,25 +77,15 @@ function processSearchResults(element: HTMLElement) {
     function () {
       if (DOWNLOADED_SONG_HASHES.includes(songHash))
         element.style.display = "none"
-    },
-    true
-  )
+    })
 
   element.addEventListener(
     "showDownloadedSongsEvent",
     function () {
       console.log("revealing")
       element.style.display = "flex"
-    },
-    true
-  )
+    })
 }
-
-// function setHashData(element: HTMLElement) {
-//   const link = element.children[2].children[0]
-//   if (!elementIsLink(link)) return
-//   element.dataset.test = link.href
-// }
 
 const observer = new MutationObserver(function (mutations) {
   for (const mutation of mutations) {
@@ -97,7 +94,6 @@ const observer = new MutationObserver(function (mutations) {
         for (const element of node.children) {
           if (!nodeIsElement(element)) return
           processSearchResults(element)
-          // setHashData(element)
         }
     }
   }
@@ -117,11 +113,20 @@ function nodeIsElement(node: Node): node is HTMLElement {
   return node instanceof HTMLElement
 }
 
-function elementIsLink(element: Element): element is HTMLLinkElement {
-  return element instanceof HTMLLinkElement
+function elementIs<T extends Element>(element: Element, type: T): element is T {
+  // @ts-ignore
+  return element instanceof type
 }
 
+function elementIsLabel(element: Element): element is HTMLLabelElement {
+  // @ts-ignore
+  return element instanceof HTMLLabelElement
+}
+
+
+// IPC Renderers
 ipcRenderer.send("songHashes")
 ipcRenderer.on("songHashes", (event, arg) => {
   DOWNLOADED_SONG_HASHES = arg
 })
+

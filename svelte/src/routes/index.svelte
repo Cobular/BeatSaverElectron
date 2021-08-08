@@ -1,2 +1,25 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+    import Settings from "../components/Settings.svelte";
+</script>
+
+<main>
+    <div class="main-child">
+        <Settings />
+    </div>
+</main>
+
+<style>
+    main {
+        display: flex;
+        justify-content: center;
+    }
+
+    .main-child {
+        max-width: 80%;
+        width: 600px;
+    }
+
+    :global(*) {
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+</style>
