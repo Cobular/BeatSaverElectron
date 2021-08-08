@@ -1,3 +1,5 @@
+const { ipcRenderer } = require('electron')
+
 function getDropdown(): Element {
   return document.getElementsByClassName("form-group col-sm-3 text-center")[0]
     .children[1]
@@ -101,3 +103,10 @@ function nodeIsElement(node: Node): node is HTMLElement {
 function elementIsLink(element: Element): element is HTMLLinkElement {
   return element instanceof HTMLLinkElement
 }
+
+console.log(ipcRenderer.sendSync('synchronous-message', 'ping')) // prints "pong"
+
+ipcRenderer.on('asynchronous-reply', (event, arg) => {
+  console.log(arg) // prints "pong"
+})
+ipcRenderer.send('asynchronous-message', 'ping')

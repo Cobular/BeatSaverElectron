@@ -8,14 +8,20 @@ function createWindow() {
   const mainWindow = new BrowserWindow({
     webPreferences: {
       devTools: true,
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
     },
-    useContentSize: true,
+    useContentSize: true
   })
 
   // and load the index.html of the app.
   const view = new BrowserView({
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
     },
   })
   mainWindow.setBrowserView(view)
@@ -51,3 +57,13 @@ app.on("window-all-closed", () => {
 // code. You can also put them in separate files and require them here
 getAllHashes("C:\\Users\\jdc10\\Downloads\\BSLegacyUtil (1)\\BSLegacyUtil\\Beat Saber\\Beat Saber_Data\\CustomLevels")
 
+const { ipcMain } = require('electron')
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.reply('asynchronous-reply', 'pong')
+})
+
+ipcMain.on('synchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.returnValue = 'pong'
+})
