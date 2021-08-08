@@ -1,7 +1,7 @@
 import { app, BrowserView, BrowserWindow } from "electron"
 import * as path from "path"
 import { getAllHashes } from "./hashes.js"
-
+import { ipcMain } from "electron"
 
 function createWindow() {
   // Create the browser window.
@@ -12,7 +12,7 @@ function createWindow() {
       contextIsolation: false,
       enableRemoteModule: true,
     },
-    useContentSize: true
+    useContentSize: true,
   })
 
   // and load the index.html of the app.
@@ -55,15 +55,12 @@ app.on("window-all-closed", () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here
-getAllHashes("C:\\Users\\jdc10\\Downloads\\BSLegacyUtil (1)\\BSLegacyUtil\\Beat Saber\\Beat Saber_Data\\CustomLevels")
 
-const { ipcMain } = require('electron')
-ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log(arg) // prints "ping"
-  event.reply('asynchronous-reply', 'pong')
-})
 
-ipcMain.on('synchronous-message', (event, arg) => {
-  console.log(arg) // prints "ping"
-  event.returnValue = 'pong'
+ipcMain.on("songHashes", (event, arg) => {
+  getAllHashes(
+    "C:\\Users\\jdc10\\Downloads\\BSLegacyUtil (1)\\BSLegacyUtil\\Beat Saber\\Beat Saber_Data\\CustomLevels"
+  ).then((value) => {
+    event.reply("songHashes", value)
+  })
 })

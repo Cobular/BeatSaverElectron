@@ -8,7 +8,8 @@
     "watch": "tsc -w",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
     "start": "npm run build && electron ./dist/main.js",
-    "hash": "npm run build && node ./dist/hashes.js"
+    "hash": "npm run build && node ./dist/hashes.js",
+    "postinstall": "cd svelte && npm i"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,8 @@
   "homepage": "https://github.com/JakeCover/BeatSaverElectron#readme",
   "devDependencies": {
     "electron": "^13.1.8",
-    "prettier": "^2.3.2"
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
   },
   "prettier": {
     "semi": false,

@@ -82,3 +82,5 @@ export async function deleteHashFiles(songsDir: string) {
 if (require.main === module) {
   testPrint()
 }
+
+

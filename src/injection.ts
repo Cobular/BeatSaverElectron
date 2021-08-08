@@ -23,6 +23,7 @@ function injectControl(id: string) {
 
 let DOWNLOADED_SONGS_BUTTON_STATE: boolean = false
 let DOWNLOADED_SONGS_BUTTON_STATE_HELPER: boolean = false
+let DOWNLOADED_SONG_HASHES: string[]
 
 const showDownloadedSongsEvent = new Event("showDownloadedSongsEvent", {
   bubbles: true,
@@ -49,11 +50,14 @@ function toggleButtonState() {
 }
 
 function processSearchResults(element: HTMLElement) {
+  const regex = /https:\/\/cdn\.beatsaver\.com\/([0-9a-fA-F]{40})\.zip/gm;
+  let songHash = regex.exec(element.children[2].children[0].getAttribute("href"))[1]
+
   element.addEventListener(
     "hideDownloadedSongsEvent",
     function () {
-      console.log("hiding")
-      element.style.display = "none"
+      if (DOWNLOADED_SONG_HASHES.includes(songHash))
+        element.style.display = "none"
     },
     true)
 
@@ -65,6 +69,9 @@ function processSearchResults(element: HTMLElement) {
     },
     true
   )
+
+
+
 }
 
 // function setHashData(element: HTMLElement) {
@@ -104,9 +111,7 @@ function elementIsLink(element: Element): element is HTMLLinkElement {
   return element instanceof HTMLLinkElement
 }
 
-console.log(ipcRenderer.sendSync('synchronous-message', 'ping')) // prints "pong"
-
-ipcRenderer.on('asynchronous-reply', (event, arg) => {
-  console.log(arg) // prints "pong"
+ipcRenderer.send('songHashes')
+ipcRenderer.on('songHashes', (event, arg) => {
+  DOWNLOADED_SONG_HASHES = arg
 })
-ipcRenderer.send('asynchronous-message', 'ping')
