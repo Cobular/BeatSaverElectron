@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron')
+const { ipcRenderer } = require("electron")
 
 function getDropdown(): Element {
   return document.getElementsByClassName("form-group col-sm-3 text-center")[0]
@@ -50,8 +50,10 @@ function toggleButtonState() {
 }
 
 function processSearchResults(element: HTMLElement) {
-  const regex = /https:\/\/cdn\.beatsaver\.com\/([0-9a-fA-F]{40})\.zip/gm;
-  let songHash = regex.exec(element.children[2].children[0].getAttribute("href"))[1]
+  const regex = /https:\/\/cdn\.beatsaver\.com\/([0-9a-fA-F]{40})\.zip/gm
+  let songHash = regex.exec(
+    element.children[2].children[0].getAttribute("href")
+  )[1]
 
   element.addEventListener(
     "hideDownloadedSongsEvent",
@@ -59,7 +61,8 @@ function processSearchResults(element: HTMLElement) {
       if (DOWNLOADED_SONG_HASHES.includes(songHash))
         element.style.display = "none"
     },
-    true)
+    true
+  )
 
   element.addEventListener(
     "showDownloadedSongsEvent",
@@ -69,9 +72,6 @@ function processSearchResults(element: HTMLElement) {
     },
     true
   )
-
-
-
 }
 
 // function setHashData(element: HTMLElement) {
@@ -111,7 +111,7 @@ function elementIsLink(element: Element): element is HTMLLinkElement {
   return element instanceof HTMLLinkElement
 }
 
-ipcRenderer.send('songHashes')
-ipcRenderer.on('songHashes', (event, arg) => {
+ipcRenderer.send("songHashes")
+ipcRenderer.on("songHashes", (event, arg) => {
   DOWNLOADED_SONG_HASHES = arg
 })
