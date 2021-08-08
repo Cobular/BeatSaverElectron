@@ -59,7 +59,7 @@ app.on("window-all-closed", () => {
 
 ipcMain.on("songHashes", (event, arg) => {
   getAllHashes(
-    "C:\\Users\\jdc10\\Downloads\\BSLegacyUtil (1)\\BSLegacyUtil\\Beat Saber\\Beat Saber_Data\\CustomLevels"
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Beat Saber\\Beat Saber_Data\\CustomLevels"
   ).then((value) => {
     event.reply("songHashes", value)
   })

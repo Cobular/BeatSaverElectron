@@ -10,15 +10,25 @@ function injectControl(id: string) {
   const h4Elements = Array.from(dropdown.children).filter((element) => {
     return element.tagName.toLowerCase() === "h4"
   })
-  const slider = dropdown.children[1].cloneNode(true)
-  if (!nodeIsElement(slider)) return
+  const NotDownloadedButton = dropdown.children[1].cloneNode(true)
+  if (!nodeIsElement(NotDownloadedButton)) return
   // @ts-ignore
-  slider.onclick = toggleButtonState
-  slider.children[0].setAttribute("id", id)
-  const label = slider.children[1]
+  NotDownloadedButton.children[0].onclick = toggleButtonState
+  // @ts-ignore
+  NotDownloadedButton.children[1].onclick = toggleButtonState
+  NotDownloadedButton.children[0].setAttribute("id", id)
+
+  var button = document.createElement("INPUT")
+  button.setAttribute("type", "image")
+  button.setAttribute("src","https://cdn.pixabay.com/photo/2018/04/23/15/35/settings-3344607_1280.png")
+  button.setAttribute("width", "15")
+  button.setAttribute("height", "15")
+  NotDownloadedButton.appendChild(button)
+
+  const label = NotDownloadedButton.children[1]
   label.setAttribute("for", id)
   label.textContent = "Not Downloaded"
-  dropdown.insertBefore(slider, h4Elements[1])
+  dropdown.insertBefore(NotDownloadedButton, h4Elements[1])
 }
 
 let DOWNLOADED_SONGS_BUTTON_STATE: boolean = false
