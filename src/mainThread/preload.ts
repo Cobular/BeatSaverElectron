@@ -1,15 +1,14 @@
 import {join} from "path";
 import {readFile} from "fs/promises";
+import { generateContextBridge } from "../utils/contextBridge"
 
-window.addEventListener("DOMContentLoaded", async () => {
+window.addEventListener("load", async () => {
   await injectJs()
   await injectStyles()
 });
 
-
 async function injectJs(): Promise<void> {
-  const filename: string = join(__dirname, "injection.js")
-  console.log(filename)
+  const filename: string = join(__dirname, "../", "renderThread", "injection.js")
   const data: string = await readFile(filename, "utf8")
 
   let script: HTMLScriptElement = document.createElement("script")

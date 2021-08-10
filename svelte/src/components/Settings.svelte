@@ -1,5 +1,13 @@
 <script lang="ts">
-    import { settings } from "../utils/store";
+    import {writable} from "svelte/store"
+
+    export const settings = writable({
+        file: ""
+    })
+
+    // settings.subscribe(
+    //   ipcRenderer.send("updateSettings")
+    // )
 </script>
 
 <div class="settings">

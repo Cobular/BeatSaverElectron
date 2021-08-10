@@ -16,11 +16,7 @@ const config = {
       pages: "../dist/svelte",
       assets: "../dist/svelte",
     }),
-    vite: {
-      optimizeDeps: {
-        include: ["electron"]
-      }
-    }
+    ssr: false,
   },
 }
 

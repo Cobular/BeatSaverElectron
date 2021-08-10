@@ -2,14 +2,15 @@
   "name": "beatsaver-electron",
   "version": "1.0.0",
   "description": "An Electron app wrapping BeatSaver which adds duplicate song detection and other features",
-  "main": "src/main.ts",
+  "main": "dist/mainThread/main.js",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "lint": "eslint -c .eslintrc --ext .ts ./src",
-    "start": "npm run build && electron ./dist/mainThread/main.js",
-    "hash": "npm run build && node ./dist/utils/hashes.js",
-    "postinstall": "cd svelte && npm i"
+    "nodemon": "nodemon",
+    "start": "npm run compile && electron .",
+    "svelte:dev": "cd svelte && npm run dev",
+    "svelte:build": "cd svelte && npm run build",
+    "compile": "tsc",
+    "out:win": "npm run svelte:build && npm run compile && electron-builder build --win --publish never",
+    "publish:win": "npm run svelte:build && npm run compile && electron-builder build --win --publish always"
   },
   "repository": {
     "type": "git",
@@ -32,7 +33,9 @@
     "electron": "^13.1.8",
     "electron-builder": "^22.11.7",
     "prettier": "^2.3.2",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "concurrently": "^6.2.0",
+    "nodemon": "^2.0.12"
   },
   "prettier": {
     "semi": false,
@@ -40,6 +43,9 @@
     "arrowParens": "always"
   },
   "dependencies": {
-    "electron-store": "^8.0.0"
+    "electron-store": "^8.0.0",
+    "electron-reload": "^1.5.0",
+    "electron-serve": "^1.1.0",
+    "electron-updater": "^4.3.9"
   }
 }

@@ -1,4 +1,5 @@
 import { BrowserView, BrowserWindow } from "electron"
+import serve from "electron-serve"
 import { join } from "path"
 
 export function createMainWindow() {
@@ -16,7 +17,7 @@ export function createMainWindow() {
   // and load the index.html of the app.
   const view = new BrowserView({
     webPreferences: {
-      preload: join(__dirname, "../", "renderThread", "/", "preload.js"),
+      preload: join(__dirname, "/", "preload.js"),
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true,
@@ -29,17 +30,21 @@ export function createMainWindow() {
   view.webContents.openDevTools()
 }
 
-export function createSettingsWindow() {
+const loadURL = serve({directory: 'dist/svelte'});
+
+export async function createSettingsWindow() {
   const settingsWindow = new BrowserWindow({
     webPreferences: {
       devTools: true,
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true,
+      preload: join(__dirname, "preload.js")
     },
-    useContentSize: true,
   })
 
-  settingsWindow.loadFile("")
+
+
+  await loadURL(settingsWindow)
 }
 
