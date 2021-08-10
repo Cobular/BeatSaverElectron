@@ -1,5 +1,66 @@
 const { ipcRenderer } = require("electron")
 
+// global vars
+let observer
+let DOWNLOADED_SONGS_BUTTON_STATE: boolean
+let DOWNLOADED_SONGS_BUTTON_STATE_HELPER: boolean
+let DOWNLOADED_SONG_HASHES: string[]
+let showDownloadedSongsEvent: Event = new Event("showDownloadedSongsEvent")
+let hideDownloadedSongsEvent: Event = new Event("hideDownloadedSongsEvent")
+
+// Redirect injection
+ipcRenderer.on("navigation", (event, args) => {
+  if (args === "https://beatsaver.com/") injectOurCode()
+})
+// First load injection
+if (window.location.href === "https://beatsaver.com/") {
+  // Do the injection
+  console.log("injecting..")
+  injectOurCode()
+} else {
+  console.log("not injecting")
+}
+
+// Injection Func
+function injectOurCode() {
+  // setup vars
+  DOWNLOADED_SONGS_BUTTON_STATE = false
+  DOWNLOADED_SONGS_BUTTON_STATE_HELPER = false
+  DOWNLOADED_SONG_HASHES = []
+
+  observer = new MutationObserver(mutationRecordCallback)
+  observer.observe(document, {
+    attributes: false,
+    characterData: false,
+    childList: true,
+    subtree: true,
+  })
+
+  // IPC Renderers
+  ipcRenderer.send("songHashes")
+  ipcRenderer.on("songHashes", (event, arg) => {
+    DOWNLOADED_SONG_HASHES = arg
+  })
+
+  // Inject our stuff
+  injectControl("test")
+}
+
+function mutationRecordCallback(mutations: MutationRecord[]) {
+  for (const mutationRecord of mutations) {
+    for (const node of mutationRecord.addedNodes) {
+      // Search Results
+      if (nodeIsElement(node) && node.className === "search-results") {
+        console.log(node)
+        for (const element of node.children) {
+          if (!nodeIsElement(element)) return
+          processSearchResults(element)
+        }
+      }
+    }
+  }
+}
+
 function getDropdown(): Element {
   return document.getElementsByClassName("form-group col-sm-3 text-center")[0]
     .children[1]
@@ -30,18 +91,14 @@ function injectControl(id: string) {
   let settingsButton = document.createElement("input")
   settingsButton.setAttribute("type", "image")
   // TODO: probably should download and re-host this
-  settingsButton.setAttribute("src","https://cdn.pixabay.com/photo/2018/04/23/15/35/settings-3344607_1280.png")
+  settingsButton.setAttribute(
+    "src",
+    "https://cdn.pixabay.com/photo/2018/04/23/15/35/settings-3344607_1280.png"
+  )
   settingsButton.className = "settingsButton"
+  settingsButton.onclick = () => ipcRenderer.send("openSettings")
   NotDownloadedButton.appendChild(settingsButton)
-  NotDownloadedButton.onclick = () => ipcRenderer.send("openSettings")
 }
-
-let DOWNLOADED_SONGS_BUTTON_STATE: boolean = false
-let DOWNLOADED_SONGS_BUTTON_STATE_HELPER: boolean = false
-let DOWNLOADED_SONG_HASHES: string[]
-
-const showDownloadedSongsEvent = new Event("showDownloadedSongsEvent")
-const hideDownloadedSongsEvent = new Event("hideDownloadedSongsEvent")
 
 function toggleButtonState() {
   if (DOWNLOADED_SONGS_BUTTON_STATE_HELPER) {
@@ -60,53 +117,28 @@ function toggleButtonState() {
   } else DOWNLOADED_SONGS_BUTTON_STATE_HELPER = true
 }
 
-
-/// Handle clicking on the gear icon
-function openSettings() {
-  ipcRenderer.send("")
-}
-
 function processSearchResults(element: HTMLElement) {
+  // Setup
   const regex = /https:\/\/cdn\.beatsaver\.com\/([0-9a-fA-F]{40})\.zip/gm
   let songHash = regex.exec(
     element.children[2].children[0].getAttribute("href")
   )[1]
-
-  element.addEventListener(
-    "hideDownloadedSongsEvent",
-    function () {
-      if (DOWNLOADED_SONG_HASHES.includes(songHash))
-        element.style.display = "none"
-    })
-
-  element.addEventListener(
-    "showDownloadedSongsEvent",
-    function () {
-      console.log("revealing")
-      element.style.display = "flex"
-    })
-}
-
-const observer = new MutationObserver(function (mutations) {
-  for (const mutation of mutations) {
-    for (const node of mutation.addedNodes) {
-      if (nodeIsElement(node) && node.className === "search-results")
-        for (const element of node.children) {
-          if (!nodeIsElement(element)) return
-          processSearchResults(element)
-        }
-    }
+  // Force load current state
+  if (DOWNLOADED_SONGS_BUTTON_STATE) {
+    if (DOWNLOADED_SONG_HASHES.includes(songHash))
+      element.style.display = "none"
   }
-})
 
-const observerParent = document.getElementById("root")
-observer.observe(observerParent, {
-  attributes: true,
-  characterData: true,
-  childList: true,
-  subtree: true,
-})
-injectControl("test")
+  // Handle future event changes
+  element.addEventListener("hideDownloadedSongsEvent", function () {
+    if (DOWNLOADED_SONG_HASHES.includes(songHash))
+      element.style.display = "none"
+  })
+  element.addEventListener("showDownloadedSongsEvent", function () {
+    console.log("revealing")
+    element.style.display = "flex"
+  })
+}
 
 // Guards
 function nodeIsElement(node: Node): node is HTMLElement {
@@ -122,11 +154,3 @@ function elementIsLabel(element: Element): element is HTMLLabelElement {
   // @ts-ignore
   return element instanceof HTMLLabelElement
 }
-
-
-// IPC Renderers
-ipcRenderer.send("songHashes")
-ipcRenderer.on("songHashes", (event, arg) => {
-  DOWNLOADED_SONG_HASHES = arg
-})
-

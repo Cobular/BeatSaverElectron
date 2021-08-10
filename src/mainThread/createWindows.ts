@@ -1,4 +1,4 @@
-import { BrowserView, BrowserWindow } from "electron"
+import { BrowserView, BrowserWindow, ipcMain } from "electron"
 import { join } from "path"
 
 export function createMainWindow() {
@@ -27,6 +27,10 @@ export function createMainWindow() {
   view.setAutoResize({ width: true, height: true })
   view.webContents.loadURL("https://beatsaver.com/")
   view.webContents.openDevTools()
+
+  view.webContents.addListener("did-navigate-in-page", (event, url) => {
+    view.webContents.send("navigation", url)
+  })
 }
 
 export function createSettingsWindow() {
