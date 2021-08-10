@@ -44,10 +44,15 @@ ipcMain.on("songHashes", (event, arg) => {
 
 // Update settings
 ipcMain.on("updateSettings", (event, arg) => {
-  const exePath = parse(arg['file'])
-  const songPath = join(exePath.dir, '/', 'Beat Saber_Data', '/', 'CustomLevels')
-  console.log(songPath)
-  store.set("filePath", songPath)
+  try {
+    const exePath = parse(arg['file'])
+    const songPath = join(exePath.dir, '/', 'Beat Saber_Data', '/', 'CustomLevels')
+    store.set("filePath", songPath)
+    event.reply("updateSettings-reply", "success")
+  }
+  catch (e) {
+    event.reply("updateSettings-reply", "failure")
+  }
 })
 
 ipcMain.on("openSettings", async (event, args) => {

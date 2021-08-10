@@ -36,10 +36,19 @@ export function createSettingsWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true,
+      preload: join(
+        __dirname,
+        "../",
+        "renderThread",
+        "/",
+        "preloadSettings.js"
+      ),
     },
     useContentSize: true,
   })
 
-  settingsWindow.loadFile("")
+  settingsWindow
+    .loadFile(join(__dirname, "..", "static", "settings.html"))
+    .then()
+    .catch((reason) => console.error(reason))
 }
-

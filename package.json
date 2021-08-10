@@ -7,9 +7,11 @@
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
+    "prestart": "npm run copyfiles",
     "start": "npm run build && electron ./dist/mainThread/main.js",
     "hash": "npm run build && node ./dist/utils/hashes.js",
-    "postinstall": "cd svelte && npm i"
+    "postinstall": "cd svelte && npm i",
+    "copyfiles": "shx cp -r ./static ./dist"
   },
   "repository": {
     "type": "git",
@@ -32,6 +34,7 @@
     "electron": "^13.1.8",
     "electron-builder": "^22.11.7",
     "prettier": "^2.3.2",
+    "shx": "^0.3.3",
     "typescript": "^4.3.5"
   },
   "prettier": {

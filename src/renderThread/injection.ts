@@ -33,7 +33,7 @@ function injectControl(id: string) {
   settingsButton.setAttribute("src","https://cdn.pixabay.com/photo/2018/04/23/15/35/settings-3344607_1280.png")
   settingsButton.className = "settingsButton"
   NotDownloadedButton.appendChild(settingsButton)
-  NotDownloadedButton.onclick
+  NotDownloadedButton.onclick = () => ipcRenderer.send("openSettings")
 }
 
 let DOWNLOADED_SONGS_BUTTON_STATE: boolean = false
