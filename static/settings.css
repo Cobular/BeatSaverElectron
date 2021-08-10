@@ -1,10 +1,90 @@
+body {
+    background-color: #222222
+}
 main {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+form {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.custom-title {
+    background: none;
+    color: #fff;
+}
+.custom-textbox {
+    background: none;
+    color: #fff;
+    border: 0;
+    margin: 0px;
+    padding: 5px;
+    text-align: left;
+    min-width:100px
+}
+.textbox-slider-in {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #3498db;
+    overflow: hidden;
+    width: 0;
+    height: 5%;
+    transition: .5s ease;
+}
+.textbox-slider-out {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #838383;
+    overflow: hidden;
+    width: 100%;
+    height: 5%;
+    transition: .5s ease;
+}
+.text-entry-container {
+    position: relative;
+}
 
-.main-child {
+.text-entry-container:hover .textbox-slider-in {
+    width: 100%;
+}
+.text-entry-container:hover .textbox-slider-out {
+    width: 0%;
+}
+
+#song-path-directory-div {
+    position: absolute;
+    right: 7px;
+    top: 5px;
+    width: 30px;
+    height: 36px;
+}
+
+#song-path-directory-text {
+    outline: none;
+    background: none;
+    color: #fff;
+    border: 0;
+    margin: 7px;
+    padding: 5px;
+    text-align: left;
+    min-width: 300px;
+}
+
+#song-path-directory-picker {
+    width: 30px;
+    height: 36px;
+}
+#main-child {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
     width: 1000px;
     max-width: 80%;
 }

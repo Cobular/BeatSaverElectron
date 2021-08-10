@@ -2,20 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Settings</title>
+  <title>
+    Settings
+  </title>
   <link rel="stylesheet" href="settings.css">
 </head>
 <body>
 <main>
-  <div class="main-child">
-    <h1>
+
+  <div id="main-child">
+
+    <h1 class="custom-title">
       Settings
     </h1>
+
     <form>
-      <label>Input</label>
-      <input type="file" id="file_loader">
+      <label class="custom-textbox">
+        Path to Beat Saber executable:
+      </label>
+
+      <div class="text-entry-container">
+        <input type="text" id="song-path-directory-text">
+          <div id="song-path-directory-div">
+            <label for="files">
+              <img src="https://static.thenounproject.com/png/978899-200.png" id="song-path-directory-picker">
+            </label>
+            <input id="files" type="file" style="visibility:hidden">
+          </div>
+        </input>
+        <div class="textbox-slider-out"></div>
+        <div class="textbox-slider-in"></div>
+      </div>
+
     </form>
+
   </div>
+
 </main>
 <script>
   const { ipcRenderer } = require("electron")
