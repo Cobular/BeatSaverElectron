@@ -6,7 +6,11 @@ import { StoreInterface } from "../utils/Types"
 import { createMainWindow, createSettingsWindow } from "./createWindows"
 
 const store: Store<StoreInterface> = new Store()
-store.set('filePath', "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Beat Saber\\Beat Saber_Data\\CustomLevels")
+if (store.get("firstTime") !== true)
+{
+  store.set('filePath', "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Beat Saber\\Beat Saber_Data\\CustomLevels")
+  store.set('firstTime', false)
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
