@@ -1,17 +1,20 @@
 {
   "name": "beatsaver-electron",
   "version": "1.0.0",
-  "description": "An Electron app wrapping BeatSaver which adds duplicate song detection and other features",
-  "main": "src/main.ts",
+  "description": "A smarter BeatSaver frontend that knows what you already have.",
+  "main": "dist/mainThread/main.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
-    "prestart": "npm run copyfiles",
-    "start": "npm run build && electron ./dist/mainThread/main.js",
-    "hash": "npm run build && node ./dist/utils/hashes.js",
-    "postinstall": "cd svelte && npm i",
-    "copyfiles": "shx cp -r ./static ./dist"
+    "prestart": "yarn run copyfiles",
+    "start": "yarn run build && electron ./dist/mainThread/main.js --dev",
+    "hash": "yarn run build && node ./dist/utils/hashes.js",
+    "postinstall": "electron-builder install-app-deps",
+    "copyfiles": "shx cp -r ./static ./dist",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:all": "electron-builder -mwl"
   },
   "repository": {
     "type": "git",

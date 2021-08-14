@@ -1,11 +1,13 @@
 import { BrowserView, BrowserWindow, ipcMain } from "electron"
 import { join } from "path"
+import { isDev } from "../utils/random"
+
 
 export function createMainWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     webPreferences: {
-      devTools: true,
+      devTools: isDev(),
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true,
@@ -36,7 +38,7 @@ export function createMainWindow() {
 export function createSettingsWindow() {
   const settingsWindow = new BrowserWindow({
     webPreferences: {
-      devTools: true,
+      devTools: isDev(),
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true,

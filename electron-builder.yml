@@ -1,0 +1,4 @@
+appId: com.cobular.scoresaverelectron
+directories:
+  output: dist-built
+productName: "ScoreSaver Electron"

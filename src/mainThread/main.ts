@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from "electron"
 import { join, parse } from "path"
 import { getAllHashes } from "../utils/hashes.js"
 import Store from "electron-store"
-import { StoreInterface } from "../utils/Types"
+import { StoreInterface } from "../utils/types"
 import { createMainWindow, createSettingsWindow } from "./createWindows"
 
 const store: Store<StoreInterface> = new Store()

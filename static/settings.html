@@ -6,59 +6,117 @@
     Settings
   </title>
   <link rel="stylesheet" href="settings.css">
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/csshake/1.5.3/csshake-horizontal.css" integrity="sha512-3tLTuZ9dpSDewYkeQ6njYfG/0g9Ee7xthJS8EDBDlJuHGMtMlcwmk/BapcsaIrru4XBS27GnGuQSV+J97YQs1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 <main>
 
   <div id="main-child">
-
     <h1 class="custom-title">
       Settings
     </h1>
 
-    <form>
-      <label class="custom-textbox">
+    <form action="#" onsubmit="onSubmitForm()">
+      <div class="file-input">
+        <label class="custom-textbox" for="song-path-directory-text">
         Path to Beat Saber executable:
       </label>
-
-      <div class="text-entry-container">
-        <input type="text" id="song-path-directory-text">
-          <div id="song-path-directory-div">
-            <label for="files">
-              <img src="https://static.thenounproject.com/png/978899-200.png" id="song-path-directory-picker">
-            </label>
-            <input id="files" type="file" style="visibility:hidden">
-          </div>
-        </input>
-        <div class="textbox-slider-out"></div>
-        <div class="textbox-slider-in"></div>
+        <input type="text" id="song-path-directory-text" oninput="onInputTextbox()" required>
+        <label id="folder-label" for="files">
+          <img src="./icons8-folder.svg" alt="folder icon"/>
+        </label>
+        <input id="files" type="file" onchange="onChangeFile()" accept=".exe">
+        <div class="textbox-slider"></div>
       </div>
 
+        <input id="continue" type="submit" value="Check Path" />
     </form>
-
   </div>
+
+  <div class="thumb hide">
+    👍
+  </div>
+
 
 </main>
 <script>
-  const { ipcRenderer } = require("electron")
+  const textInput = document.getElementById("song-path-directory-text")
+  const fileSelect = document.getElementById("files")
+  const overallInputElements = document.querySelector(".file-input")
+  const underline = document.querySelector(".textbox-slider")
+  const thumb = document.querySelector(".thumb")
 
-  const input = document.querySelector("input")
-
-  input.addEventListener("change", onSubmit)
-
-  function onSubmit(event) {
-    ipcRenderer.send("updateSettings", event.target.value)
+  function onSubmitForm(event) {
+    console.log("Form Submitted")
+    checkIfPathOk(textInput.value)
+    return false
   }
 
+  /// Handle setting the textInput to match the form value
+  function onChangeFile(event) {
+    console.log("File Submitted")
+    // Make it work in electron (first case) and kind of work in a normal browser (second case)
+    console.log(fileSelect.files[0].path || fileSelect.files[0].name)
+    textInput.value = fileSelect.files[0].path || fileSelect.files[0].name
+    onInputTextbox()
+  }
+
+  /// Update the button state based on the contents of the textbox.
+  /// This should be ran once at the start to pre-set the value
+  function onInputTextbox() {
+    console.log("Textbox Contents Changed")
+
+    document.getElementById('continue').disabled = document.getElementById("song-path-directory-text").value === "";
+  }
+  onInputTextbox()
+
+  /// Controls the shake animation and red underline
+  const animationClassList = ["animate__animated", "animate__headShake"]
+  function doError() {
+    overallInputElements.classList.add(...animationClassList)
+    underline.classList.add("invalid")
+
+    overallInputElements.addEventListener('animationend', () => {
+      overallInputElements.classList.remove(...animationClassList)
+    });
+  }
+
+  /// Unmark the bar as error, then show the thumbs up, then close the window
+  function doSuccess() {
+    underline.classList.remove("invalid")
+    thumb.classList.remove("hide")
+    setTimeout(() => {
+      closeWindow()
+    }, 500)
+  }
+
+  /// handles main thread callback
+  function checkIfPathOk(path) {
+    ipcRenderer.send("updateSettings", path)
+  }
+</script>
+<script>
+  const { ipcRenderer, remote } = require("electron")
   ipcRenderer.on("updateSettings-reply", (event, args) => {
     if (args === "success") {
       // Display a success message of some kind, maybe just reveal a "continue" button
+      doSuccess()
       console.log("success")
     } else if (args === "failure") {
       // Display an error message of some kind, possibly a toast
+      doError()
       console.log("failure")
     }
   })
+
+  function closeWindow() {
+    remote.getCurrentWindow().close()
+  }
 </script>
 </body>
 </html>
